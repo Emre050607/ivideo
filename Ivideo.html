@@ -44,6 +44,24 @@
       border-radius: 6px;
     }
 
+    .video-gallery .video-container {
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .delete-button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 0.25rem 0.5rem;
+      cursor: pointer;
+      font-size: 0.75rem;
+      border-radius: 3px;
+    }
+
     form {
       display: flex;
       flex-direction: column;
@@ -100,7 +118,13 @@
     const form = document.getElementById('upload-form');
     const videoGallery = document.getElementById('video-gallery');
 
-    const sharedVideos = [];
+    const USER_ID_KEY = 'ivideo_user_id';
+    const STORAGE_KEY = 'ivideo_videos';
+
+    if (!localStorage.getItem(USER_ID_KEY)) {
+      localStorage.setItem(USER_ID_KEY, Date.now().toString());
+    }
+    const userId = localStorage.getItem(USER_ID_KEY);
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -111,21 +135,42 @@
         mainVideo.load();
         mainVideo.play();
 
-        // Store and show uploaded video for all users
-        sharedVideos.push(url);
+        const videos = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        videos.push({ url, userId });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(videos));
         renderGallery();
       }
     });
 
     function renderGallery() {
+      const videos = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
       videoGallery.innerHTML = '<h2>Shared Videos</h2>';
-      sharedVideos.forEach(videoSrc => {
+      videos.forEach((videoData, index) => {
+        const container = document.createElement('div');
+        container.className = 'video-container';
+
         const video = document.createElement('video');
         video.controls = true;
-        video.src = videoSrc;
-        videoGallery.appendChild(video);
+        video.src = videoData.url;
+
+        if (videoData.userId === userId) {
+          const btn = document.createElement('button');
+          btn.className = 'delete-button';
+          btn.textContent = 'Delete';
+          btn.onclick = () => {
+            const newVideos = videos.filter((_, i) => i !== index);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(newVideos));
+            renderGallery();
+          };
+          container.appendChild(btn);
+        }
+
+        container.appendChild(video);
+        videoGallery.appendChild(container);
       });
     }
+
+    renderGallery();
   </script>
 </body>
 </html>
