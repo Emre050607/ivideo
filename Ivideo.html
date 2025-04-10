@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ivideo</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #0f0;
+    }
+    header {
+      background-color: #111;
+      padding: 1rem 2rem;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #0f0;
+    }
+    .container {
+      padding: 2rem;
+    }
+    .video-player {
+      margin-bottom: 2rem;
+    }
+    video {
+      width: 100%;
+      max-width: 800px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      border: 2px solid #0f0;
+    }
+    .upload-form {
+      text-align: center;
+    }
+    input[type="file"] {
+      margin-top: 1rem;
+      background: #0f0;
+      color: #000;
+      border: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+    }
+    input[type="submit"] {
+      background: #0f0;
+      color: #000;
+      border: none;
+      padding: 0.5rem 1rem;
+      margin-left: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>Ivideo</header>
+
+  <div class="container">
+    <div class="video-player">
+      <video controls>
+        <source src="sample.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <div class="upload-form">
+      <form id="uploadForm">
+        <label for="videoUpload">Upload your video:</label>
+        <input type="file" id="videoUpload" accept="video/*" />
+        <input type="submit" value="Upload" />
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const uploadForm = document.getElementById('uploadForm');
+    const videoPlayer = document.querySelector('video');
+    const videoUpload = document.getElementById('videoUpload');
+
+    uploadForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const file = videoUpload.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        videoPlayer.src = url;
+        videoPlayer.load();
+        videoPlayer.play();
+      }
+    });
+  </script>
+</body>
+</html>
